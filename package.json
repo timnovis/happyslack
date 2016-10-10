@@ -1,7 +1,7 @@
 {
   "name": "happinessbot",
   "version": "1.0.0",
-  "description": "",
+  "description": "A slack bot that integrates with Google's Cloud Natural Language API to tell you how happy you really are, inside.",
   "main": "index.js",
   "dependencies": {
     "botkit": "^0.2.2",
@@ -12,5 +12,13 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/timnovis/happyslack.git"
+  },
+  "bugs": {
+    "url": "https://github.com/timnovis/happyslack/issues"
+  },
+  "homepage": "https://github.com/timnovis/happyslack#readme"
 }

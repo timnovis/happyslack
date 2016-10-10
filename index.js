@@ -1,37 +1,30 @@
-var Botkit = require('botkit');
-var request = require('request');
+var botkit	= require('botkit'),
+	gcloud 	= require('google-cloud');
 
-var controller = Botkit.slackbot({
+var language = gcloud.language({
+	projectId: 'YOUR_GOOGLE_PROJECT_ID',
+	keyFilename: 'service-key.json',
+});
+
+var controller = botkit.slackbot({
   debug: false
 });
 
 controller.spawn({
-  token: 'YOUR_BOT_TOKEN',
+  token: 'YOUR_SLACK_TOKEN',
 }).startRTM();
 
-controller.on('direct_mention', function(bot,message) {
-	console.log(message);
-	request.post('https://language.googleapis.com/v1beta1/documents:analyzeSentiment',
-	    {
-	    	json: {
-				"document": {
-					"type": "PLAIN_TEXT",
-					"content": message.text
-				},
-				"encodingType": "UTF8"
-	    	},
-	    	headers: {
-	    		"Authorization" : "Bearer <YOUR_GOOGLE_TOKEN>"
-	    	}
-	    },
-	    function (error, response, body) {
-			var resp = body.documentSentiment.polarity;
-			if(resp >= 0) {
-				var emoji = ' :grinning:';
-			} else if(resp < 0) {
-				var emoji = ' :disappointed:';
-			}
-			bot.reply(message, "Your happiness scale is " + resp.toString() + emoji);
-	    }
-	);
+controller.on(['direct_mention', 'direct_message'], function(bot, message) {
+
+	language.detectSentiment(message.text, function(error, sentiment, response) {
+		var polarity = response.documentSentiment.polarity.toString();
+		var magnitude = response.documentSentiment.magnitude.toString();
+		if(polarity >= 0) {
+			var emoji = ' :grinning:';
+		} else if(polarity < 0) {
+			var emoji = ' :disappointed:';
+		}
+		bot.reply(message, "You are about " + polarity + " units of happy. " + emoji + " Your sentence has a magnitude of " + magnitude);
+	});
+
 });
